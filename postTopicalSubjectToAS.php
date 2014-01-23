@@ -14,12 +14,31 @@
 
 //Example using CURL for Get
 
-//next example will receive all messages for specific conversation
-//$service_url = 'http://example.com/api/conversations/[CONV_CODE]/messages&apikey=[API_KEY]';
+class Data {
+    public $title = "";
+    public $vocabulary = "";
+    public $external_ids = "";
+    public $source = "";
+    public $authority_id = "";
+    public $created_by = "";
+    //'created_on' => ,
+    public $last_modified_by = "";
+    public $user_mtime = "";
+    public $terms= "";
+}
+
+class Term {
+    public $term_type = "";
+    public $term = "";
+    public $vocabulary = "";
+
+
+}
 
 //not sure if needed
 $username = 'admin';
 $password = 'admin';
+$filename = "/Users/cknowles/Desktop/CRCSubjectCSV/cms_auth_subj.csv";
 
 //start session
 //start_session();
@@ -28,7 +47,8 @@ $session_id = loginToAS($username, $password);
 
 print_r($session_id);
 echo '***************';
-createSubject($session_id);
+readInCSV($filename, $session_id);
+
 
 function loginToAS($username, $password)
 {
@@ -74,93 +94,61 @@ function loginToAS($username, $password)
     //echo print_r($session_id);
     return $session_id;
 }
-// POST DATA USING SESSION ID
 
-function createRepository($session_id)
+function readInCSV($csvFile, $session_id)
 {
-    $data = array(
-        'repo_code' => 'testnow1',
-        'name' => 'Test Now 1'
-    );
+    if(!file_exists($csvFile) || !is_readable($csvFile))
+        return FALSE;
 
-    $headers = array(
-        'Accept: application/json',
-        'Content-Type: application/json',
-        'X-ArchivesSpace-Session: '.$session_id
-    );
+    $file_handle = fopen($csvFile, 'r');
+    $delimiter = ',';
+    $enclosure = '"';
+    $escape = '\\';
 
-    $service_url = 'http://localhost:8089/repositories';
-    $curl = curl_init($service_url);
+    while ($line = fgets($file_handle)) {
+        $line_as_arr = str_getcsv( $line , $delimiter , $enclosure, $escape);
+        if(count($line_as_arr) == 13)
+        {
+            if ($line_as_arr[12] != 'y')
+            {
+                //echo($line_as_arr[12]);
+                createSubject($line_as_arr, $session_id);
+            }
+        }
+        else{
+            echo("Error processing line =".$line);
+        }
 
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_VERBOSE, 1);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
-    curl_setopt($curl, CURLOPT_URL, $service_url);
-
-    $curl_response = curl_exec($curl);
-    if ($curl_response === false) {
-        $info = curl_getinfo($curl);
-        curl_close($curl);
-        die('error occurred during curl exec. Additional info: ' . var_export($info));
     }
-    curl_close($curl);
-    $decoded = json_decode($curl_response);
-    if (isset($decoded->response->status) && $decoded->response->status == 'ERROR') {
-        die('error occurred: ' . $decoded->response->errormessage);
-    }
-    echo 'response ok!';
-    echo print_r($curl_response);
-    //echo '====================';
-    //echo print_r($decoded);
+    fclose($file_handle);
 
 }
 
-
-function createSubject($session_id)
+function createSubject($line_as_arr, $session_id)
 {
+    //ignore lines set to delete/suppress
     //example from CRC database
     //id	term	use_for	source	other	ext_id	notes	created_for	created_by	created_on	last_edited	last_edited_by	suppress
     //1	Landscape		lcsh				NAHSTE	Rachael Third	0000-00-00 00:00:00	2009-08-19 13:30:52	Grant Buttars	NULL
 
-
-    class Data {
-        public $title = "";
-        public $vocabulary = "";
-        public $external_ids = "";
-        public $source = "";
-        public $authority_id = "";
-        public $created_by = "";
-            //'created_on' => ,
-        public $last_modified_by = "";
-        public $user_mtime = "";
-        public $terms= "";
-    }
-
-    class Term {
-        public $term_type = "";
-        public $term = "";
-        public $vocabulary = "";
+    //0   1     2         3        4       5        6        7             8           9            10            11               12
+    //id,"term","use_for","source","other","ext_id","notes","created_for","created_by","created_on","last_edited","last_edited_by","suppress"
 
 
-    }
     $term = new Term();
-    $term->term = "Oranges";
+    $term->term = $line_as_arr[1];
     $term->term_type = "topical";
     $term->vocabulary = "/vocabularies/1";
 
     $data = new Data();
-    $data->title = "Oranges";
+    $data->title = $line_as_arr[1];
     $data->vocabulary  = "/vocabularies/1";
     $data->external_ids =array();
-    $data->source = "lcsh";
-    $data->authority_id = "lcsh";
-    $data->created_by = "Claire Knowles";
-    $data->last_modified_by = "John Smith";
-    $data->user_mtime = "2009-08-19 13:30:52";
+    $data->source = $line_as_arr[3];
+    $data->authority_id = "sub_".$line_as_arr[0];
+    $data->created_by = $line_as_arr[8];
+    $data->last_modified_by = $line_as_arr[11];
+    $data->user_mtime = $line_as_arr[10];
     $data->terms = array($term);
 
     //echo json_encode($data);
