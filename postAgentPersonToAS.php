@@ -230,18 +230,6 @@ function createAgent($line_as_arr, $session_id)
         $notes[] = $note;
     }
 
-    if (!empty($line_as_arr[10]))
-    {
-        $note = new Note();
-        $note->label = "Source";
-
-        $subnote = new SubNote();
-        $subnote->content = $line_as_arr[10];
-
-        $note->subnotes = array($subnote);
-        $notes[] = $note;
-    }
-
     if (!empty($line_as_arr[12]))
     {
         $note = new Note();
