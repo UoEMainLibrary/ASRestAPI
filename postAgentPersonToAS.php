@@ -22,7 +22,6 @@ class Agent {
     public $external_documents = "";
     public $notes = "";
 
-
     public $type = "";
     public $vocabulary = "";
     public $external_ids = "";
@@ -37,18 +36,25 @@ class Agent {
 
 }
 
-class NameFamily {
+class AgentContacts{
+    public $name = "";
+    public $jsonmodel_type = "agent_contact";
+}
+
+
+class Name {
     public $type = "";
-    public $family_name = "";
-    public $prefix = "";
+    public $primary_name = ""; //surname
+    public $rest_of_name = ""; //forenames
+    public $prefix = ""; //Mrs, Mr etc
+    public $title = ""; //Sir etc
     public $authority_id = "";
     public $dates = "";
-    public $use_dates = "";
-    public $qualifier = "";
     public $source = "";
-    public $rules = "";
     public $sort_name_auto_generate = "";
+    public $name_order = "inverted";
 }
+
 
 class Note {
     public $label = "";
@@ -59,12 +65,13 @@ class Note {
 class SubNote {
     public $content = "";
     public $jsonmodel_type = "note_text";
+    public $publish = false;
 }
 
 //not sure if needed
 $username = 'admin';
 $password = 'admin';
-$filename = "/Users/cknowles/Desktop/CRCSubjectCSV/cms_auth_fam.csv";
+$filename = "/Users/cknowles/Desktop/CRCSubjectCSV/cms_auth_pers.csv";
 
 //start session
 //start_session();
@@ -132,11 +139,11 @@ function readInCSV($csvFile, $session_id)
 
     while ($line = fgets($file_handle)) {
         $line_as_arr = str_getcsv( $line , $delimiter , $enclosure, $escape);
-        if(count($line_as_arr) == 17)
+        if(count($line_as_arr) == 19)
         {
 
             //ignore lines set to delete/suppress
-            if ($line_as_arr[16] != 'y')
+            if ($line_as_arr[18] != 'y')
             {
 
                 createAgent($line_as_arr, $session_id);
@@ -153,48 +160,119 @@ function readInCSV($csvFile, $session_id)
 
 function createAgent($line_as_arr, $session_id)
 {
-   //0    1                  2       3          4       5                       6           7        8      9           10      11           12              13                 14                   15              16
-   //id	famterm	             normal	family_name	title	territorial_distinction	variant_of	use_for	source	lang_code	notes	created_for	created_by	     created_on	        last_edited	        last_edited_by	suppress
-   //1	Butter | of Faskally		Butter		        of Faskally, Perthshire	0					                             EUA	    Grant Buttars	14/10/2009 13:20	30/10/2009 09:24	Kirsty Stewart	y
+    //0   1         2       3           4           5    6                 7            8           9       10        11
+    //id  persterm	normal	family_name	given_name	date terms_of_address  description	variant_of	use_for	source	lang_code
 
-    $name = new NameFamily();
-    $name->authority_id = "fam_sss".$line_as_arr[0];
-    //$name->dates;
-    $name->family_name = $line_as_arr[3];
-    $name->prefix = $line_as_arr[4];
-    $name->qualifier = $line_as_arr[5];
+    //12    13          14          15          16          17              18
+    //notes	created_for	created_by	created_on	last_edited	last_edited_by	suppress
+    $name = new Name();
+    $name->authority_id = "per_".$line_as_arr[0];
+    $name->dates = $line_as_arr[5];
+    $name->primary_name = $line_as_arr[3];
+    $name->rest_of_name = $line_as_arr[4];
+    $name->title = $line_as_arr[6];
+
     //rules are required when source is blank
-    if (empty($line_as_arr[8]))
-    {
-        $name->rules = "local";
-    }
+    $name->source= "local";
 
     $name->sort_name_auto_generate = TRUE;
-    $name->source= "local";
+
     $name->type= $line_as_arr[3];
-    //$name->use_dates;
+
+
+    $notes = array();
+
+    if (!empty($line_as_arr[10]))
+    {
+        $note = new Note();
+        $note->label = "Source";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[10];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+    if (!empty($line_as_arr[7]))
+    {
+        $note = new Note();
+        $note->label = "Description";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[7];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
 
     if (!empty($line_as_arr[8]))
     {
         $note = new Note();
-        $note->label = "Imported Information";
+        $note->label = "Variant Of";
 
         $subnote = new SubNote();
         $subnote->content = $line_as_arr[8];
 
         $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+    if (!empty($line_as_arr[9]))
+    {
+        $note = new Note();
+        $note->label = "Use For";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[9];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+    if (!empty($line_as_arr[10]))
+    {
+        $note = new Note();
+        $note->label = "Source";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[10];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+    if (!empty($line_as_arr[12]))
+    {
+        $note = new Note();
+        $note->label = "Notes";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[12];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+    if (!empty($line_as_arr[13]))
+    {
+        $note = new Note();
+        $note->label = "Created For";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[13];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
     }
 
     $data = new Agent();
-    //$data->title = $line_as_arr[3];
-    $data->agent_type = "agent_family";
-    //$data->type;
-    //$data->source;
-    //$data->agent_contacts;
-    //$data->authority_id;
+    $data->agent_type = "agent_person";
 
-
-    $data->notes = array($note);
+    if (count($notes) > 0)
+    {
+        $data->notes = $notes;
+    }
 
     //link to terms 1-2-1 for these
     $data->names = array($name);
@@ -202,13 +280,20 @@ function createAgent($line_as_arr, $session_id)
     //echo json_encode($data);
     //echo '====================';
 
+
+    // is this needed?
+    //$agent_contact = new AgentContacts();
+    //$agent_contact->name= $line_as_arr[3];
+
+    //$data->agent_contacts = array($agent_contact);
+
     $headers = array(
         'Accept: application/json',
         'Content-Type: application/json',
         'X-ArchivesSpace-Session: '.$session_id
     );
 
-    $service_url = 'http://localhost:8089/agents/families';
+    $service_url = 'http://localhost:8089/agents/people';
     $curl = curl_init($service_url);
 
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

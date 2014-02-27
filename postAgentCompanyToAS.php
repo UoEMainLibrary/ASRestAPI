@@ -13,8 +13,16 @@
 
 //Example using CURL for Get
 
-class Data {
+class Agent {
     public $title = "";
+    //one of "agent_person", "agent_corporate_entity", "agent_software", "agent_family", "user"
+    public $agent_type = "";
+    public $agent_contacts = "";
+    public $linked_agent_roles = "";
+    public $external_documents = "";
+    public $notes = "";
+
+    public $type = "";
     public $vocabulary = "";
     public $external_ids = "";
     public $source = "";
@@ -23,21 +31,46 @@ class Data {
     //'created_on' => ,
     public $last_modified_by = "";
     public $user_mtime = "";
-    public $terms= "";
+    public $names= "";
+    public $related_agents= "";
+
 }
 
-class Term {
-    public $term_type = "";
-    public $term = "";
-    public $vocabulary = "";
+class AgentContacts{
+    public $name = "";
+    public $jsonmodel_type = "agent_contact";
+}
+
+class Name {
+    public $type = "";
+    public $primary_name = "";
+    public $subordinate_name_1 = "";
+    public $subordinate_name_2 = "";
+    public $authority_id = "";
+    public $dates = "";
+    public $qualifier = "";
+    public $source = "";
+    public $rules = "";
+    public $sort_name_auto_generate = "";
+}
 
 
+class Note {
+    public $label = "";
+    public $jsonmodel_type = "note_bioghist";
+    public $subnotes = "";
+}
+
+class SubNote {
+    public $content = "";
+    public $jsonmodel_type = "note_text";
+    public $publish = false;
 }
 
 //not sure if needed
 $username = 'admin';
 $password = 'admin';
-$filename = "/Users/cknowles/Desktop/CRCSubjectCSV/cms_auth_subj.csv";
+$filename = "/Users/cknowles/Desktop/CRCSubjectCSV/cms_auth_corp.csv";
 
 //start session
 //start_session();
@@ -45,7 +78,6 @@ $session_id = loginToAS($username, $password);
 //$_SESSION['TOKEN']=$session_id;
 
 print_r($session_id);
-echo '***************';
 readInCSV($filename, $session_id);
 
 
@@ -106,12 +138,14 @@ function readInCSV($csvFile, $session_id)
 
     while ($line = fgets($file_handle)) {
         $line_as_arr = str_getcsv( $line , $delimiter , $enclosure, $escape);
-        if(count($line_as_arr) == 13)
+        if(count($line_as_arr) == 19)
         {
-            if ($line_as_arr[12] != 'y')
+
+            //ignore lines set to delete/suppress
+            if ($line_as_arr[18] != 'y')
             {
-                //echo($line_as_arr[12]);
-                createSubject($line_as_arr, $session_id);
+
+                createAgent($line_as_arr, $session_id);
             }
         }
         else{
@@ -123,33 +157,106 @@ function readInCSV($csvFile, $session_id)
 
 }
 
-function createSubject($line_as_arr, $session_id)
+function createAgent($line_as_arr, $session_id)
 {
-    //ignore lines set to delete/suppress
-    //example from CRC database
+   //0  1         2      3              4              5    6            7       8           9      10       11       12    13          14          15           16         17             18
+   //id	corpterm normal	 primary_name  secondary_name date  description	location variant_of	use_for	source	lang_code notes	created_for	created_by	created_on	last_edited	last_edited_by	suppress
+    $name = new Name();
+    $name->authority_id = "cor_".$line_as_arr[0];
+    $name->dates = $line_as_arr[5];
+    $name->primary_name = $line_as_arr[3];
+    $name->subordinate_name_1 = $line_as_arr[4];
+    //rules are required when source is blank
+    $name->source= "local";
 
-    //0   1     2         3        4       5        6        7             8           9            10            11               12
-    //id,"term","use_for","source","other","ext_id","notes","created_for","created_by","created_on","last_edited","last_edited_by","suppress"
+    $name->sort_name_auto_generate = TRUE;
+
+    $name->type= $line_as_arr[3];
 
 
-    $term = new Term();
-    $term->term = $line_as_arr[1];
-    $term->term_type = "topical";
-    $term->vocabulary = "/vocabularies/1";
+    $notes = array();
 
-    $data = new Data();
-    $data->title = $line_as_arr[1];
-    $data->vocabulary  = "/vocabularies/1";
-    $data->external_ids =array();
-    $data->source = $line_as_arr[3];
-    $data->authority_id = "sub_".$line_as_arr[0];
-    //not picking up these 3
-    $data->created_by = $line_as_arr[8];
-    $data->last_modified_by = $line_as_arr[11];
-    $data->user_mtime = $line_as_arr[10];
+    if (!empty($line_as_arr[10]))
+    {
+        $note = new Note();
+        $note->label = "Source";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[10];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+    if (!empty($line_as_arr[6]))
+    {
+        $note = new Note();
+        $note->label = "Description";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[6];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+    if (!empty($line_as_arr[7]))
+    {
+        $note = new Note();
+        $note->label = "Location";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[7];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+
+    if (!empty($line_as_arr[9]))
+    {
+        $note = new Note();
+        $note->label = "Use For";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[9];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+    if (!empty($line_as_arr[12]))
+    {
+        $note = new Note();
+        $note->label = "Notes";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[12];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+    $data = new Agent();
+    $data->agent_type = "agent_corporate_entity";
+
+    if (count($notes) > 0)
+    {
+        $data->notes = $notes;
+    }
+
     //link to terms 1-2-1 for these
-
+    $data->names = array($name);
+    //echo '=======********==========';
     //echo json_encode($data);
+    //echo '====================';
+
+
+    // is this needed?
+    //$agent_contact = new AgentContacts();
+    //$agent_contact->name= $line_as_arr[3];
+
+    //$data->agent_contacts = array($agent_contact);
 
     $headers = array(
         'Accept: application/json',
@@ -157,7 +264,7 @@ function createSubject($line_as_arr, $session_id)
         'X-ArchivesSpace-Session: '.$session_id
     );
 
-    $service_url = 'http://localhost:8089/subjects';
+    $service_url = 'http://localhost:8089/agents/corporate_entities';
     $curl = curl_init($service_url);
 
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

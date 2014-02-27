@@ -37,7 +37,7 @@ class Term {
 //not sure if needed
 $username = 'admin';
 $password = 'admin';
-$filename = "/Users/cknowles/Desktop/CRCSubjectCSV/cms_auth_subj.csv";
+$filename = "/Users/cknowles/Desktop/CRCSubjectCSV/cms_auth_genr.csv";
 
 //start session
 //start_session();
@@ -108,6 +108,7 @@ function readInCSV($csvFile, $session_id)
         $line_as_arr = str_getcsv( $line , $delimiter , $enclosure, $escape);
         if(count($line_as_arr) == 13)
         {
+            //ignore lines set to delete/suppress
             if ($line_as_arr[12] != 'y')
             {
                 //echo($line_as_arr[12]);
@@ -125,16 +126,15 @@ function readInCSV($csvFile, $session_id)
 
 function createSubject($line_as_arr, $session_id)
 {
-    //ignore lines set to delete/suppress
-    //example from CRC database
 
+    //example from CRC database
     //0   1     2         3        4       5        6        7             8           9            10            11               12
     //id,"term","use_for","source","other","ext_id","notes","created_for","created_by","created_on","last_edited","last_edited_by","suppress"
 
 
     $term = new Term();
     $term->term = $line_as_arr[1];
-    $term->term_type = "topical";
+    $term->term_type = "genre_form";
     $term->vocabulary = "/vocabularies/1";
 
     $data = new Data();
@@ -142,12 +142,13 @@ function createSubject($line_as_arr, $session_id)
     $data->vocabulary  = "/vocabularies/1";
     $data->external_ids =array();
     $data->source = $line_as_arr[3];
-    $data->authority_id = "sub_".$line_as_arr[0];
+    $data->authority_id = "gen".$line_as_arr[0];
     //not picking up these 3
     $data->created_by = $line_as_arr[8];
     $data->last_modified_by = $line_as_arr[11];
     $data->user_mtime = $line_as_arr[10];
     //link to terms 1-2-1 for these
+    $data->terms = array($term);
 
     //echo json_encode($data);
 
