@@ -179,20 +179,8 @@ function createAgent($line_as_arr, $session_id)
 
     $name->type= $line_as_arr[3];
 
-
     $notes = array();
 
-    if (!empty($line_as_arr[10]))
-    {
-        $note = new Note();
-        $note->label = "Source";
-
-        $subnote = new SubNote();
-        $subnote->content = $line_as_arr[10];
-
-        $note->subnotes = array($subnote);
-        $notes[] = $note;
-    }
 
     if (!empty($line_as_arr[7]))
     {
@@ -225,6 +213,18 @@ function createAgent($line_as_arr, $session_id)
 
         $subnote = new SubNote();
         $subnote->content = $line_as_arr[9];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+    if (!empty($line_as_arr[10]))
+    {
+        $note = new Note();
+        $note->label = "Source";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[10];
 
         $note->subnotes = array($subnote);
         $notes[] = $note;
