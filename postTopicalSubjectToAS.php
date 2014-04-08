@@ -147,7 +147,7 @@ function createSubject($line_as_arr, $session_id)
     $data->created_by = $line_as_arr[8];
     $data->last_modified_by = $line_as_arr[11];
     $data->user_mtime = $line_as_arr[10];
-    //link to terms 1-2-1 for these
+    $data->terms = array($term);
 
     //echo json_encode($data);
 
