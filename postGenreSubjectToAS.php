@@ -143,11 +143,26 @@ function createSubject($line_as_arr, $session_id)
     $data->external_ids =array();
     $data->source = $line_as_arr[3];
     $data->authority_id = "gen".$line_as_arr[0];
-    //not picking up these 3
-    // $data->created_by = $line_as_arr[8];
-    //$data->last_modified_by = $line_as_arr[11];
-    //$data->user_mtime = $line_as_arr[10];
-    //link to terms 1-2-1 for these
+
+    //add notes
+    $notes = "";
+
+    if (!empty($line_as_arr[5])){
+        $notes = $notes . "External Id = " . $line_as_arr[5] . ",";
+    }
+    if (!empty($line_as_arr[6])) {
+        $notes = $notes . "Notes = " . $line_as_arr[6]. ",";
+    }
+    if (!empty($line_as_arr[7])) {
+        $notes = $notes . "Created For = " . $line_as_arr[7]. ",";
+    }
+    if (!empty($line_as_arr[2])) {
+        $notes = $notes . "Use For = " . $line_as_arr[2]. ",";
+    }
+    if (strlen($notes) > 0){
+        $data->scope_note = trim($notes, ",");
+    }
+
     $data->terms = array($term);
 
     //echo json_encode($data);

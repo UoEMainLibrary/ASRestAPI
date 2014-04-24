@@ -179,22 +179,22 @@ function createSubject($line_as_arr, $session_id)
     $notes = "";
 
     if (!empty($line_as_arr[10])){
-        $notes = $notes . "alt form = " . $line_as_arr[10] . ",";
+        $notes = $notes . "Alt form = " . $line_as_arr[10] . ",";
     }
     if (!empty($line_as_arr[11])) {
-        $notes = $notes . "alt form lang = " . $line_as_arr[11]. ",";
+        $notes = $notes . "Alt form lang = " . $line_as_arr[11]. ",";
     }
     if (!empty($line_as_arr[12])) {
-        $notes = $notes . "use For = " . $line_as_arr[12]. ",";
+        $notes = $notes . "Use For = " . $line_as_arr[12]. ",";
     }
     if (!empty($line_as_arr[13])){
-        $notes = $notes . "locator = " . $line_as_arr[13]. ",";
+        $notes = $notes . "Locator = " . $line_as_arr[13]. ",";
     }
     if (!empty($line_as_arr[15])) {
-        $notes = $notes . "other = " . $line_as_arr[15]. ",";
+        $notes = $notes . "Other = " . $line_as_arr[15]. ",";
     }
     if (!empty($line_as_arr[17])) {
-        $notes = $notes . "notes = " . $line_as_arr[17]. ",";
+        $notes = $notes . "Notes = " . $line_as_arr[17]. ",";
     }
     if (strlen($notes) > 0){
         $data->scope_note = trim($notes, ",");

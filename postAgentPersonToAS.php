@@ -168,6 +168,7 @@ function createAgent($line_as_arr, $session_id)
     $name = new Name();
     $name->authority_id = "per_".$line_as_arr[0];
     $name->dates = $line_as_arr[5];
+    $name->qualifier = $line_as_arr[7];
     $name->primary_name = $line_as_arr[3];
     $name->rest_of_name = $line_as_arr[4];
     $name->title = $line_as_arr[6];
@@ -180,19 +181,6 @@ function createAgent($line_as_arr, $session_id)
     $name->type= $line_as_arr[3];
 
     $notes = array();
-
-
-    if (!empty($line_as_arr[7]))
-    {
-        $note = new Note();
-        $note->label = "Description";
-
-        $subnote = new SubNote();
-        $subnote->content = $line_as_arr[7];
-
-        $note->subnotes = array($subnote);
-        $notes[] = $note;
-    }
 
     if (!empty($line_as_arr[8]))
     {
