@@ -171,16 +171,65 @@ function createAgent($line_as_arr, $session_id)
     $name->type= $line_as_arr[3];
     //$name->use_dates;
 
+
+    if (!empty($line_as_arr[6]))
+    {
+        $note = new Note();
+        $note->label = "Variant Of";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[6];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+    if (!empty($line_as_arr[7]))
+    {
+        $note = new Note();
+        $note->label = "Use For ";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[7];
+
+        $note->subnotes = array($subnote);
+    }
+
+
     if (!empty($line_as_arr[8]))
     {
         $note = new Note();
-        $note->label = "Imported Information";
+        $note->label = "Source";
 
         $subnote = new SubNote();
         $subnote->content = $line_as_arr[8];
 
         $note->subnotes = array($subnote);
     }
+
+    if (!empty($line_as_arr[10]))
+    {
+        $note = new Note();
+        $note->label = "Notes";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[10];
+
+        $note->subnotes = array($subnote);
+    }
+
+    if (!empty($line_as_arr[11]))
+    {
+        $note = new Note();
+        $note->label = "Created For";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[11];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
 
     $data = new Agent();
     $data->agent_type = "agent_family";

@@ -236,6 +236,19 @@ function createAgent($line_as_arr, $session_id)
         $notes[] = $note;
     }
 
+    if (!empty($line_as_arr[13]))
+    {
+        $note = new Note();
+        $note->label = "Created For";
+
+        $subnote = new SubNote();
+        $subnote->content = $line_as_arr[13];
+
+        $note->subnotes = array($subnote);
+        $notes[] = $note;
+    }
+
+
     $data = new Agent();
     $data->agent_type = "agent_corporate_entity";
 

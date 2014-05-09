@@ -106,6 +106,7 @@ function readInCSV($csvFile, $session_id)
 
     while ($line = fgets($file_handle)) {
         $line_as_arr = str_getcsv( $line , $delimiter , $enclosure, $escape);
+        echo (count($line_as_arr));
         if(count($line_as_arr) == 13)
         {
             //ignore lines set to delete/suppress
@@ -127,6 +128,7 @@ function readInCSV($csvFile, $session_id)
 function createSubject($line_as_arr, $session_id)
 {
 
+    echo 'create subject';
     //example from CRC database
     //0   1     2         3        4       5        6        7             8           9            10            11               12
     //id,"term","use_for","source","other","ext_id","notes","created_for","created_by","created_on","last_edited","last_edited_by","suppress"
@@ -165,7 +167,7 @@ function createSubject($line_as_arr, $session_id)
 
     $data->terms = array($term);
 
-    //echo json_encode($data);
+    echo json_encode($data);
 
     $headers = array(
         'Accept: application/json',

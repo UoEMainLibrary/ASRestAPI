@@ -196,6 +196,13 @@ function createSubject($line_as_arr, $session_id)
     if (!empty($line_as_arr[17])) {
         $notes = $notes . "Notes = " . $line_as_arr[17]. ",";
     }
+    if (!empty($line_as_arr[16])){
+        $notes = $notes . "External Id = " . $line_as_arr[16] . ",";
+    }
+    if (!empty($line_as_arr[18])) {
+        $notes = $notes . "Created For = " . $line_as_arr[7]. ",";
+    }
+
     if (strlen($notes) > 0){
         $data->scope_note = trim($notes, ",");
     }
