@@ -169,8 +169,14 @@ function createAgent($line_as_arr, $session_id)
     $name->authority_id = "per_".$line_as_arr[0];
     $name->dates = $line_as_arr[5];
     $name->qualifier = $line_as_arr[7];
-    $name->primary_name = $line_as_arr[3];
-    $name->rest_of_name = $line_as_arr[4];
+    if (!empty($line_as_arr[3]))
+    {
+        $name->primary_name = $line_as_arr[3];
+        $name->rest_of_name = $line_as_arr[4];
+    }
+    else{
+        $name->primary_name = $line_as_arr[4];
+    }
     $name->title = $line_as_arr[6];
 
     //rules are required when source is blank

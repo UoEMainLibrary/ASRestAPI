@@ -164,8 +164,14 @@ function createAgent($line_as_arr, $session_id)
     $name = new Name();
     $name->authority_id = "cor_".$line_as_arr[0];
     $name->dates = $line_as_arr[5];
-    $name->primary_name = $line_as_arr[3];
-    $name->subordinate_name_1 = $line_as_arr[4];
+    if (!empty($line_as_arr[3]))
+    {
+        $name->primary_name = $line_as_arr[3];
+        $name->subordinate_name_1 = $line_as_arr[4];
+    }
+    else{
+        $name->primary_name = $line_as_arr[4];
+    }
     //rules are required when source is blank
     $name->source= "local";
 
