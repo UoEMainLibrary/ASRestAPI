@@ -37,7 +37,7 @@ class Term {
 //not sure if needed
 $username = 'admin';
 $password = 'admin';
-$filename = "/Users/cknowles/Desktop/CRCSubjectCSV/cms_auth_geog.csv";
+$filename = "/Users/cknowles/Documents/CRCSubjectCSV/updated/cms_auth_geog.csv";
 
 //start session
 //start_session();
@@ -200,7 +200,7 @@ function createSubject($line_as_arr, $session_id)
         $notes = $notes . "External Id = " . $line_as_arr[16] . ",";
     }
     if (!empty($line_as_arr[18])) {
-        $notes = $notes . "Created For = " . $line_as_arr[7]. ",";
+        $notes = $notes . "Created For = " . $line_as_arr[18]. ",";
     }
 
     if (strlen($notes) > 0){
