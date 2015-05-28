@@ -35,9 +35,9 @@ class Term {
 }
 
 //not sure if needed
-$username = 'admin';
-$password = 'admin';
-$filename = "/Users/cknowles/Desktop/CRCSubjectCSV/cms_auth_genr.csv";
+$username = 'xxxx';
+$password = 'xxxx';
+$filename = "/Users/cknowles/Documents/CRCSubjectCSV/updated/cms_auth_genr.csv";
 
 //start session
 //start_session();
@@ -144,7 +144,7 @@ function createSubject($line_as_arr, $session_id)
     $data->vocabulary  = "/vocabularies/1";
     $data->external_ids =array();
     $data->source = $line_as_arr[3];
-    $data->authority_id = "gen".$line_as_arr[0];
+    $data->authority_id = "gen_".$line_as_arr[0];
 
     //add notes
     $notes = "";

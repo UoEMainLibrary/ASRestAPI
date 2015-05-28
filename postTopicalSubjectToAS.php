@@ -35,9 +35,9 @@ class Term {
 }
 
 //not sure if needed
-$username = 'admin';
-$password = 'admin';
-$filename = "/Users/cknowles/Desktop/CRCSubjectCSV/cms_auth_subj.csv";
+$username = 'xxxx';
+$password = 'xxxx';
+$filename = "/Users/cknowles/Documents/CRCSubjectCSV/updated/cms_auth_subj.csv";
 
 //start session
 //start_session();
@@ -143,7 +143,7 @@ function createSubject($line_as_arr, $session_id)
     $data->external_ids =array();
     $data->source = $line_as_arr[3];
     $data->authority_id = "sub_".$line_as_arr[0];
-    //not picking up these 3
+        //not picking up these 3
     //$data->created_by = $line_as_arr[8];
     //$data->last_modified_by = $line_as_arr[11];
     //$data->user_mtime = $line_as_arr[10];

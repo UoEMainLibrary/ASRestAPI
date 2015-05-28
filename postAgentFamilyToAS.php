@@ -59,9 +59,9 @@ class SubNote {
 }
 
 //not sure if needed
-$username = 'admin';
-$password = 'admin';
-$filename = "/Users/cknowles/Desktop/CRCSubjectCSV/cms_auth_fam.csv";
+$username = 'xxxx';
+$password = 'xxxx';
+$filename = "/Users/cknowles/Documents/CRCSubjectCSV/updated/cms_auth_fam.csv";
 
 //start session
 //start_session();
@@ -156,7 +156,6 @@ function createAgent($line_as_arr, $session_id)
 
     $name = new NameFamily();
     $name->authority_id = "fam_".$line_as_arr[0];
-    //$name->dates;
     $name->family_name = $line_as_arr[3];
     $name->prefix = $line_as_arr[4];
     $name->qualifier = $line_as_arr[5];

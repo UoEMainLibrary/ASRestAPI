@@ -68,9 +68,9 @@ class SubNote {
 }
 
 //not sure if needed
-$username = 'admin';
-$password = 'admin';
-$filename = "/Users/cknowles/Desktop/CRCSubjectCSV/cms_auth_corp.csv";
+$username = 'xxxx';
+$password = 'xxxx';
+$filename = "/Users/cknowles/Documents/CRCSubjectCSV/updated/cms_auth_corp.csv";
 
 //start session
 //start_session();

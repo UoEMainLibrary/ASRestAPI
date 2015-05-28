@@ -35,8 +35,8 @@ class Term {
 
 
 //not sure if needed
-$username = 'admin';
-$password = 'admin';
+$username = 'xxxx';
+$password = 'xxxx';
 $filename = "/Users/cknowles/Documents/CRCSubjectCSV/updated/cms_auth_geog.csv";
 
 //start session
