@@ -110,10 +110,10 @@ function getClass($session_id)
     $decoded = json_decode($curl_response);
     echo $curl_response;
     foreach($decoded as $value) {
-       // echo $value . ' ';
-       // update($session_id, $repo_id, $class_type, $value);
+        echo $value . ' ';
+        publish($session_id, $repo_id, $class_type, $value);
     }
-    publish($session_id, $repo_id, $class_type, 419);
+    //publish($session_id, $repo_id, $class_type, 419);
     if (isset($decoded->response->status) && $decoded->response->status == 'ERROR') {
         die('error occurred get list: ' . $decoded->response->errormessage);
     }
